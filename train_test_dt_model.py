@@ -30,13 +30,9 @@ for label in labels:
 
 
             if features is not None:
-                # Add Spectral Roll-off, Spectral Bandwidth, and RMS Energy
-                spectral_rolloff = np.percentile(np.abs(features), 85)
-                spectral_bandwidth = np.std(features)
-                rms_energy = np.sqrt(np.mean(features**2))
 
                 # Combine these features with the existing ones
-                combined_features = np.hstack((features, spectral_rolloff, spectral_bandwidth, rms_energy))
+                combined_features = np.hstack((features))
                 X.append(combined_features)
                 y.append(label)
 
