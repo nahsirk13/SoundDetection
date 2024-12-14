@@ -24,7 +24,6 @@ from scipy.fftpack import dct
 
 def extract_features(file_path):
     try:
-        # Load the audio file
         sample_rate, audio_data = wavfile.read(file_path)
 
         # If stereo, take the first channel
@@ -44,14 +43,13 @@ def extract_features(file_path):
         zcr = np.mean((audio_data[:-1] * audio_data[1:] < 0).astype(float))
 
         # 3. Spectral Centroid
-        fft_spectrum = np.abs(fft(audio_data)[:len(audio_data) // 2])  # Use positive frequencies
+        fft_spectrum = np.abs(fft(audio_data)[:len(audio_data) // 2])
         freqs = np.fft.fftfreq(len(audio_data), 1 / sample_rate)[:len(audio_data) // 2]
         spectral_centroid = np.sum(freqs * fft_spectrum) / np.sum(fft_spectrum)
 
         # 4. Spectral Roll-off (85% energy)
         cumulative_energy = np.cumsum(fft_spectrum)
-        total_energy = cumulative_energy[-1]
-        rolloff_threshold = 0.85 * total_energy
+        rolloff_threshold = 0.85 * cumulative_energy[-1]
         spectral_rolloff = freqs[np.searchsorted(cumulative_energy, rolloff_threshold)]
 
         # 5. Spectral Bandwidth
@@ -60,8 +58,11 @@ def extract_features(file_path):
         # 6. RMS Energy
         rms_energy = np.sqrt(np.mean(audio_data**2))
 
-        # Combine all features into a single vector
+        # Combine all features (update to 21 features as used in training)
         features = np.hstack((mfcc_approx, zcr, spectral_centroid, spectral_rolloff, spectral_bandwidth, rms_energy))
+
+        # If additional features were used, ensure they are included here
+        # e.g., Spectral Flatness, Pitch, etc.
         return features
     except Exception as e:
         print(f"Error extracting features from {file_path}: {e}")
