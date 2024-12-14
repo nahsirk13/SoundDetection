@@ -28,7 +28,7 @@ class SoundClassifierApp(QMainWindow):
         self.setWindowIcon(QIcon("logo.png"))
         # Load the trained model
         try:
-            self.model = joblib.load("sound_classifier.pkl")
+            self.model = joblib.load("decision_tree_classifier.pkl")
             print("Model loaded successfully.")
         except Exception as e:
             print(f"Error loading model: {e}")
